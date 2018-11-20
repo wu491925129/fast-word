@@ -7,6 +7,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.wulong.project.core.Result;
 import com.wulong.project.core.ResultCode;
 import com.wulong.project.core.ServiceException;
+import com.wulong.project.tool.IpUtils;
 import com.wulong.project.tool.JwtUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -126,19 +127,19 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
             registry.addInterceptor(new HandlerInterceptorAdapter() {
                 @Override
                 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-                    //JWT验证签名
-                    boolean pass = jwtValidate(request);
-                    if (pass) {
-                        return true;
-                    } else {
-                        logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}",
-                                request.getRequestURI(), getIpAddress(request), JSON.toJSONString(request.getParameterMap()));
+                //JWT验证签名
+                boolean pass = jwtValidate(request);
+                if (pass) {
+                    return true;
+                } else {
+                    logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}",
+                            request.getRequestURI(), IpUtils.getIpAddr(request), JSON.toJSONString(request.getParameterMap()));
 
-                        Result result = new Result();
-                        result.setCode(ResultCode.UNAUTHORIZED).setMessage("签名认证失败");
-                        responseResult(response, result);
-                        return false;
-                    }
+                    Result result = new Result();
+                    result.setCode(ResultCode.UNAUTHORIZED).setMessage("签名认证失败");
+                    responseResult(response, result);
+                    return false;
+                }
                 }
             });
         }
@@ -171,33 +172,4 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
         return true;
     }
 
-    /**
-     * 获取请求用户的ip地址
-     * @param request
-     * @return
-     */
-    private String getIpAddress(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        // 如果是多级代理，那么取第一个ip为客户端ip
-        if (ip != null && ip.indexOf(",") != -1) {
-            ip = ip.substring(0, ip.indexOf(",")).trim();
-        }
-
-        return ip;
-    }
 }

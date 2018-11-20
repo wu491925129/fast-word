@@ -5,6 +5,7 @@ import com.wulong.project.model.UserInfo;
 import com.wulong.project.service.UserInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wulong.project.slog.SLog;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +47,13 @@ public class UserInfoController {
         return ResultGenerator.genSuccessResult(userInfo);
     }
 
+    /**
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    @SLog(type = "user",tag="用户信息",msg = "获取用户信息",param = "page:${page},size:${size}")
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
