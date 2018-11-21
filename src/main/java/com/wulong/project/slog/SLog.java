@@ -23,11 +23,4 @@ public @interface SLog {
 
 	String msg() default "";
 
-	/**
-	 * 传递参数
-	 *
-	 * @return 消息模板
-	 */
-	String param() default "";
-
 }

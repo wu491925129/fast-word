@@ -6,16 +6,13 @@ import com.wulong.project.service.UserInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wulong.project.slog.SLog;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* Created by CodeGenerator on 2018/11/19.
+* Created by CodeGenerator on 2018/11/21.
 */
 @RestController
 @RequestMapping("/user/info")
@@ -24,7 +21,7 @@ public class UserInfoController {
     private UserInfoService userInfoService;
 
     @PostMapping("/add")
-    public Result add(UserInfo userInfo) {
+    public Result add(@RequestBody(required = false) UserInfo userInfo) {
         userInfoService.save(userInfo);
         return ResultGenerator.genSuccessResult();
     }
@@ -47,14 +44,8 @@ public class UserInfoController {
         return ResultGenerator.genSuccessResult(userInfo);
     }
 
-    /**
-     *
-     * @param page
-     * @param size
-     * @return
-     */
-    @SLog(type = "user",tag="用户信息",msg = "获取用户信息",param = "page:${page},size:${size}")
     @PostMapping("/list")
+    @SLog(type = "user",tag = "用户信息",msg = "获取用户列表信息")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
         List<UserInfo> list = userInfoService.findAll();

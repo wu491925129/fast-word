@@ -2,6 +2,8 @@ package com.wulong.project.configurer.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wulong.project.model.SysLog;
 import com.wulong.project.service.SysLogService;
 import com.wulong.project.slog.SLog;
 import com.wulong.project.tool.IpUtils;
@@ -21,10 +23,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Parameter;
+import java.util.*;
 
 /**
  * AOP统一日志处理
@@ -67,16 +67,8 @@ public class WebLogAspect {
 		logger.info("请求来源: " + IpUtils.getIpAddr(request));
 		logger.info("响应方法: " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature
 				().getName());
-		//获取所有参数方法一：
-		Enumeration<String> enu = request.getParameterNames();
-		while (enu.hasMoreElements()) {
-			String paraName = enu.nextElement();
-			if (paraName.equals("password")) {
-				logger.info("请求参数: " + paraName + ":******");
-			} else {
-				logger.info("请求参数: "+ paraName+":"+request.getParameter(paraName));
-			}
-		}
+		Map<String,Object> params = getMethodParams(request);
+		logger.info("请求参数: " + JSON.toJSONString(params));
 	}
 
 	/**
@@ -87,7 +79,7 @@ public class WebLogAspect {
 	@AfterReturning(pointcut="webLog()",argNames = "joinPoint,retVal",returning = "retVal")
 	public void doAfterReturning(JoinPoint joinPoint,Object retVal) {
 		logger.info("请求耗时: "+(System.currentTimeMillis()-startTime)+"毫秒");
-		Map<String,Object> result = JSONObject.parseObject(JSON.toJSONString(retVal));
+		Map<String,Object> result = JSONObject.parseObject(JSON.toJSONString(retVal,SerializerFeature.WriteMapNullValue));
 		if (result.containsKey("data")) {
 			Map<String,Object> dataMap = (Map<String, Object>) result.get("data");
 			if (dataMap.containsKey("token")) {
@@ -101,21 +93,55 @@ public class WebLogAspect {
 	}
 
 
+	/**
+	 * 打日志
+	 * @param joinPoint
+	 * @param retVal
+	 */
 	public void doSLog(JoinPoint joinPoint, Object retVal) {
 		// 拦截方法上的SLog注解
 		Signature signature = joinPoint.getSignature();
+		String className = signature.getDeclaringTypeName();
+		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		HttpServletRequest request = attributes.getRequest();
 		MethodSignature methodSignature = (MethodSignature)signature;
 		Method targetMethod = methodSignature.getMethod();
+		String methodName = signature.getName();
 		if (targetMethod.isAnnotationPresent(SLog.class)) {
 			SLog sLog = (SLog)targetMethod.getAnnotation(SLog.class);
-			String[] params = sLog.param().split(",");
-			String param = "";
-			for (int i = 0; i < params.length; i++) {
-				String[] paramList = params[i].split(":");
-				param = param + paramList[0]+":"+targetMethod.getParameterCount();
-			}
-			System.out.print(param);
+			SysLog sysLog = new SysLog();
+			sysLog.setId(UUID.randomUUID().toString().replace("-",""));
+			sysLog.setIp(IpUtils.getIpAddr(request));
+			sysLog.setMsg(sLog.msg());
+			sysLog.setTag(sLog.tag());
+			sysLog.setSrc(className + "." + methodName);
+			sysLog.setType(sLog.type());
+			sysLog.setParam(JSON.toJSONString(getMethodParams(request)));
+			// null也输出
+			sysLog.setResult(JSON.toJSONString(retVal,SerializerFeature.WriteMapNullValue));
+			sysLog.setOpTime(new Date());
+			sysLogService.save(sysLog);
 		}
+	}
+
+	/**
+	 * 获取request请求的参数
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> getMethodParams(HttpServletRequest request) {
+		Map<String,Object> result = new HashMap<>();
+		//获取所有参数方法一：
+		Enumeration<String> enu = request.getParameterNames();
+		while (enu.hasMoreElements()) {
+			String paraName = enu.nextElement();
+			if (paraName.equals("password")) {
+				result.put(paraName,"******");
+			} else {
+				result.put(paraName,request.getParameter(paraName));
+			}
+		}
+		return result;
 	}
 }
 

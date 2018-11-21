@@ -107,6 +107,50 @@ public class UserInfo {
     private Byte delFlag;
 
     /**
+     * 登陆国家
+     */
+    private String country;
+
+    /**
+     * 登陆城市
+     */
+    private String city;
+
+    /**
+     * 登陆省份
+     */
+    private String region;
+
+    /**
+     * 登陆运营商
+     */
+    private String isp;
+
+    /**
+     * 国家id
+     */
+    @Column(name = "country_id")
+    private String countryId;
+
+    /**
+     * 省份id
+     */
+    @Column(name = "region_id")
+    private String regionId;
+
+    /**
+     * 城市id
+     */
+    @Column(name = "city_id")
+    private String cityId;
+
+    /**
+     * 运营商id
+     */
+    @Column(name = "isp_id")
+    private String ispId;
+
+    /**
      * 订阅标签
      */
     @Column(name = "like_tag")
@@ -436,6 +480,150 @@ public class UserInfo {
      */
     public void setDelFlag(Byte delFlag) {
         this.delFlag = delFlag;
+    }
+
+    /**
+     * 获取登陆国家
+     *
+     * @return country - 登陆国家
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * 设置登陆国家
+     *
+     * @param country 登陆国家
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    /**
+     * 获取登陆城市
+     *
+     * @return city - 登陆城市
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * 设置登陆城市
+     *
+     * @param city 登陆城市
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * 获取登陆省份
+     *
+     * @return region - 登陆省份
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * 设置登陆省份
+     *
+     * @param region 登陆省份
+     */
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    /**
+     * 获取登陆运营商
+     *
+     * @return isp - 登陆运营商
+     */
+    public String getIsp() {
+        return isp;
+    }
+
+    /**
+     * 设置登陆运营商
+     *
+     * @param isp 登陆运营商
+     */
+    public void setIsp(String isp) {
+        this.isp = isp;
+    }
+
+    /**
+     * 获取国家id
+     *
+     * @return country_id - 国家id
+     */
+    public String getCountryId() {
+        return countryId;
+    }
+
+    /**
+     * 设置国家id
+     *
+     * @param countryId 国家id
+     */
+    public void setCountryId(String countryId) {
+        this.countryId = countryId;
+    }
+
+    /**
+     * 获取省份id
+     *
+     * @return region_id - 省份id
+     */
+    public String getRegionId() {
+        return regionId;
+    }
+
+    /**
+     * 设置省份id
+     *
+     * @param regionId 省份id
+     */
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
+    }
+
+    /**
+     * 获取城市id
+     *
+     * @return city_id - 城市id
+     */
+    public String getCityId() {
+        return cityId;
+    }
+
+    /**
+     * 设置城市id
+     *
+     * @param cityId 城市id
+     */
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+
+    /**
+     * 获取运营商id
+     *
+     * @return isp_id - 运营商id
+     */
+    public String getIspId() {
+        return ispId;
+    }
+
+    /**
+     * 设置运营商id
+     *
+     * @param ispId 运营商id
+     */
+    public void setIspId(String ispId) {
+        this.ispId = ispId;
     }
 
     /**

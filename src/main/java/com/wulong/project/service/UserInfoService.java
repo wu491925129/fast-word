@@ -4,7 +4,7 @@ import com.wulong.project.core.Service;
 
 
 /**
- * Created by CodeGenerator on 2018/11/19.
+ * Created by CodeGenerator on 2018/11/21.
  */
 public interface UserInfoService extends Service<UserInfo> {
 
