@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.lihengming</groupId>
-    <artifactId>spring-boot-api-project-seed</artifactId>
+    <artifactId>fast-word</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.13.RELEASE</version>
+        <version>2.0.3.RELEASE</version>
     </parent>
 
     <dependencies>

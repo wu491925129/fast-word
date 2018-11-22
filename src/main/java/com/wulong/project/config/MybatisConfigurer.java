@@ -1,4 +1,4 @@
-package com.wulong.project.configurer;
+package com.wulong.project.config;
 
 import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.plugin.Interceptor;

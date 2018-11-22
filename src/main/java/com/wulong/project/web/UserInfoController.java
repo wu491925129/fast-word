@@ -6,23 +6,33 @@ import com.wulong.project.service.UserInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wulong.project.slog.SLog;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.UUID;
 
 /**
-* Created by CodeGenerator on 2018/11/21.
+ * @Author:wulong
+ * @Date:2018/11/19 14:25
+ * @mail:491925129@qq.com
+ * @CrossOrigin 注解 支持跨域
+ * @Transactional 事务
 */
+@CrossOrigin
+@Transactional(rollbackFor = Exception.class)
 @RestController
 @RequestMapping("/user/info")
 public class UserInfoController {
     @Resource
     private UserInfoService userInfoService;
 
-    @PostMapping("/add")
+    @PostMapping("/regist")
+    @SLog(type = "regist",tag = "用户注册",msg = "用户注册")
     public Result add(@RequestBody(required = false) UserInfo userInfo) {
-        userInfoService.save(userInfo);
+        userInfo.setUserId(UUID.randomUUID().toString().replace("-",""));
+    	userInfoService.save(userInfo);
         return ResultGenerator.genSuccessResult();
     }
 

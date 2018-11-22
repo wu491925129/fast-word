@@ -1,4 +1,4 @@
-package com.wulong.project.configurer.aop;
+package com.wulong.project.config.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -23,7 +23,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.*;
 
 /**
@@ -82,8 +81,8 @@ public class WebLogAspect {
 		Map<String,Object> result = JSONObject.parseObject(JSON.toJSONString(retVal,SerializerFeature.WriteMapNullValue));
 		if (result.containsKey("data")) {
 			Map<String,Object> dataMap = (Map<String, Object>) result.get("data");
-			if (dataMap.containsKey("token")) {
-				((Map<String, Object>) result.get("data")).put("token","******");
+			if (dataMap != null && dataMap.containsKey("auth_token")) {
+				((Map<String, Object>) result.get("data")).put("auth_token","******");
 			}
 		}
 		doSLog(joinPoint,retVal);
