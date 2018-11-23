@@ -27,10 +27,10 @@ public class JwtUtils {
      *  
      * @param jti jwt的唯一身份标识,主要用来作为一次性token,从而回避重放攻击 
      * @param sub jwt所面向的用户 
-     * @param expiredTimeAt 过期时间(当前时间ms+要过期时间ms),单位ms 
+     * @param expiredTime 过期时间,单位ms
      * @return 
      */  
-    public static String createJWT(String jti, String sub, long expiredTimeAt) {  
+    public static String createJWT(String jti, String sub, long expiredTime) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         Long nowMillis = System.currentTimeMillis();  
         Date now = new Date(nowMillis);
@@ -41,8 +41,8 @@ public class JwtUtils {
                 .setSubject(sub)  //sub(Subject)：代表这个JWT的主体，即它的所有人，这个是一个json格式的字符串，可以存放什么userid，roldid之类的，作为什么用户的唯一标志。
                 .setIssuedAt(now) // jwt的签发时间
                 .signWith(signatureAlgorithm, secretKey);
-        if (expiredTimeAt >= 0) {  
-        	long expMillis = nowMillis + expiredTimeAt;
+        if (expiredTime >= 0) {
+        	long expMillis = nowMillis + expiredTime;
             Date expDate = new Date(expMillis);  
             builder.setExpiration(expDate);  // token过期时间
         }  
@@ -88,7 +88,7 @@ public class JwtUtils {
     }  
       
     public static void main(String[] args) throws Exception {
-        String jwtString = createJWT("1001", "1001", System.currentTimeMillis() + 10000);
+        String jwtString = createJWT("1001", "1001", 10000);
         System.out.println(jwtString);
 
         /*String jwtString = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoid3Vsb25nIiwianRpIjoiMTAwMSIsInN1YiI6IjEwMDEiLCJpYXQiOjE1NDI2MTczODAsImV4cCI6MzA4NTIzNDc3MX0._vtA9p7dCflY9usm5uJ0I1AT8cGqn3Ldj-k--e6Hr5Y";

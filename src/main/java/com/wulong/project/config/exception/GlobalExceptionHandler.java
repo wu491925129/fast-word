@@ -67,43 +67,5 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
 		}
 	}
 
-	/*@ExceptionHandler(Exception.class)
-	@ResponseBody
-	public Map<String,Object> exceptionHandler(HttpServletRequest req, Exception e) throws Exception {
-		Map<String,Object> result = new HashMap<>();
-		if (e instanceof NoHandlerFoundException) {
-			result.put("status",404);
-			result.put("msg","找不到请求的资源");
-			logger.error("------------------------- 请求404错误 Start -------------------------");
-			errMsg(req);
-			logger.error("------------------------- 请求404错误  End  -------------------------");
-		} else {
-			result.put("status",500);
-			result.put("msg","服务器内部错误");
-			logger.error("------------------------- 请求500错误 Start -------------------------");
-			errMsg(req);
-			logger.error("------------------------- 请求500错误  End  -------------------------");
-		}
-		logger.error(e.getMessage());
-		return result;
-	}*/
-
-	/*private void errMsg(HttpServletRequest req){
-		logger.error("请求路径: "+req.getRequestURL().toString());
-		logger.info("请求方式: " + req.getMethod());
-		logger.info("请求来源: " + getIpAddr(req));
-		//获取所有参数方法一：
-		Enumeration<String> enu = req.getParameterNames();
-		List<Map<String,Object>> args = new ArrayList<>();
-		Map<String,Object> argMap = new HashMap<>();
-		while (enu.hasMoreElements()) {
-			String paraName = enu.nextElement();
-			argMap.put(paraName,req.getParameter(paraName));
-			args.add(argMap);
-		}
-		String argsJson = JSON.toJSONString(args);
-		logger.info("请求参数: "+ argsJson);
-	}*/
-
 }
 

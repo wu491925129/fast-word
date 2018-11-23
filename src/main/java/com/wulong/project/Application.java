@@ -13,6 +13,11 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * 加载SpringUtils
+     * 有时候service注入不了可以使用springUtil从IOC中拿
+     * @return
+     */
     @Bean
     public SpringUtil getSpringUtil2() {
         return new SpringUtil();

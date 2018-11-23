@@ -1,6 +1,7 @@
 package com.wulong.project.config.interceptor;
 
 import com.alibaba.fastjson.JSON;
+import com.wulong.project.core.ProjectConstant;
 import com.wulong.project.tool.IpUtils;
 import com.wulong.project.tool.JwtUtils;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		if (!needFilter) {
 			return true;
 		} else {
-			String token = request.getHeader("auth_token");
+			String token = request.getHeader(ProjectConstant.JWT_TOKEN);
 			// 返回true认证通过  返回false认证不通过
 			if (JwtUtils.validateJWT(token)) {
 				return true;
