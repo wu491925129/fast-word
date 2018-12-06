@@ -1,7 +1,7 @@
 # fast-word
 
 ##简介
-本项目后端基于spring boot开发，前端基于vue开发，采用前后端分离的模式开发。
+本项目后端基于spring boot开发，前端基于vue开发，采用前后端分离的模式开发
 
 ##项目结构
 * 平台配置：configurer
