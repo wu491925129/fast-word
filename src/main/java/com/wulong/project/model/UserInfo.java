@@ -104,7 +104,7 @@ public class UserInfo {
      * 删除标记
      */
     @Column(name = "del_flag")
-    private Byte delFlag;
+    private int delFlag;
 
     /**
      * 登陆国家
@@ -469,7 +469,7 @@ public class UserInfo {
      *
      * @return del_flag - 删除标记
      */
-    public Byte getDelFlag() {
+    public int getDelFlag() {
         return delFlag;
     }
 
@@ -478,7 +478,7 @@ public class UserInfo {
      *
      * @param delFlag 删除标记
      */
-    public void setDelFlag(Byte delFlag) {
+    public void setDelFlag(int delFlag) {
         this.delFlag = delFlag;
     }
 
