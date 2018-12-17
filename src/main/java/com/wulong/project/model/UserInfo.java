@@ -41,12 +41,12 @@ public class UserInfo {
      * 是否在线
      */
     @Column(name = "on_line")
-    private Byte onLine;
+    private int onLine;
 
     /**
      * 是否禁用
      */
-    private Byte disable;
+    private int disable;
 
     /**
      * 邮箱
@@ -271,7 +271,7 @@ public class UserInfo {
      *
      * @return on_line - 是否在线
      */
-    public Byte getOnLine() {
+    public int getOnLine() {
         return onLine;
     }
 
@@ -280,7 +280,7 @@ public class UserInfo {
      *
      * @param onLine 是否在线
      */
-    public void setOnLine(Byte onLine) {
+    public void setOnLine(int onLine) {
         this.onLine = onLine;
     }
 
@@ -289,7 +289,7 @@ public class UserInfo {
      *
      * @return disable - 是否禁用
      */
-    public Byte getDisable() {
+    public int getDisable() {
         return disable;
     }
 
@@ -298,7 +298,7 @@ public class UserInfo {
      *
      * @param disable 是否禁用
      */
-    public void setDisable(Byte disable) {
+    public void setDisable(int disable) {
         this.disable = disable;
     }
 

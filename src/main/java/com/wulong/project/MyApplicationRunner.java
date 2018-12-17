@@ -1,5 +1,6 @@
 package com.wulong.project;
 
+import com.wulong.project.email.EmailTemplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ public class MyApplicationRunner implements ApplicationRunner {
 		// 开机自动初始化
 		logger.info("项目开机初始化成功！");
 		logger.info("项目访问入口：localhost:"+port+path);
+		EmailTemplet.initEmailTemplet();
 	}
 
 }

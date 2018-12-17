@@ -131,6 +131,12 @@
             <artifactId>quartz</artifactId>
             <version>2.3.0</version>
         </dependency>
+
+        <!-- 集成邮件发送功能 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
