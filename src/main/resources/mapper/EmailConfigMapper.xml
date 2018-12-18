@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wulong.project.dao.EmailConfigMapper">
+  <resultMap id="BaseResultMap" type="com.wulong.project.model.EmailConfigInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
+    <result column="form_name" jdbcType="VARCHAR" property="formName" />
+    <result column="from_email" jdbcType="VARCHAR" property="fromEmail" />
+    <result column="form_password" jdbcType="VARCHAR" property="formPassword" />
+    <result column="receive_email" jdbcType="VARCHAR" property="receiveEmail" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="subject" jdbcType="LONGVARCHAR" property="subject" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+</mapper>

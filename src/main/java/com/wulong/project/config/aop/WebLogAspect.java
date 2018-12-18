@@ -80,9 +80,11 @@ public class WebLogAspect {
 		logger.info("请求耗时: "+(System.currentTimeMillis()-startTime)+"毫秒");
 		Map<String,Object> result = JSONObject.parseObject(JSON.toJSONString(retVal,SerializerFeature.WriteMapNullValue));
 		if (result.containsKey("data")) {
-			Map<String,Object> dataMap = (Map<String, Object>) result.get("data");
-			if (dataMap != null && dataMap.containsKey("auth_token")) {
-				((Map<String, Object>) result.get("data")).put("auth_token","******");
+			if (result.get("data") instanceof Map) {
+				Map<String,Object> dataMap = (Map<String, Object>) result.get("data");
+				if (dataMap != null && dataMap.containsKey("auth_token")) {
+					((Map<String, Object>) result.get("data")).put("auth_token","******");
+				}
 			}
 		}
 		doSLog(joinPoint,retVal);
@@ -97,7 +99,7 @@ public class WebLogAspect {
 	 * @param joinPoint
 	 * @param retVal
 	 */
-	public void doSLog(JoinPoint joinPoint, Object retVal) {
+	public void doSLog(JoinPoint joinPoint, Object retVal){
 		// 拦截方法上的SLog注解
 		Signature signature = joinPoint.getSignature();
 		String className = signature.getDeclaringTypeName();
@@ -106,7 +108,7 @@ public class WebLogAspect {
 		MethodSignature methodSignature = (MethodSignature)signature;
 		Method targetMethod = methodSignature.getMethod();
 		String methodName = signature.getName();
-		if (targetMethod.isAnnotationPresent(SLog.class)) {
+        if (targetMethod.isAnnotationPresent(SLog.class)) {
 			SLog sLog = (SLog)targetMethod.getAnnotation(SLog.class);
 			SysLog sysLog = new SysLog();
 			sysLog.setId(UUID.randomUUID().toString().replace("-",""));

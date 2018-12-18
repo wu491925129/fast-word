@@ -4,21 +4,41 @@ package com.wulong.project.email.entity;
  * @Author: wulong
  * @Date: 2018/12/17 14:57
  * @Email: 491925129@qq.com
+ * 邮件内容实体
  */
 public class EmailMailInfo {
-    //邮箱服务器 如smtp.163.com
+    /**
+     * 发送邮箱服务器
+     */
     private String host ;
-    //用户邮箱 如**@163
+    /**
+     * 发送者名称
+     */
     private String formName ;
-    //用户授权码 不是用户名密码 可以自行查看相关邮件服务器怎么查看
+    /**
+     * 发送邮箱密码或授权码
+     */
     private String formPassword ;
-    //消息回复邮箱
-    private String replayAddress ;
-    //发送地址
-    private String toAddress ;
-    //发送主题
+    /**
+     * 接收邮箱地址
+     */
+    private String receiveEmail ;
+    /**
+     * 发送者邮箱地址
+     */
+    private String fromEmail ;
+
+    /**
+     * 邮件类型
+     */
+    private String type;
+    /**
+     * 发送主题
+     */
     private String subject ;
-    //发送内容
+    /**
+     * 发送内容
+     */
     private String content ;
 
     public String getHost() {
@@ -45,20 +65,20 @@ public class EmailMailInfo {
         this.formPassword = formPassword;
     }
 
-    public String getReplayAddress() {
-        return replayAddress;
+    public String getReceiveEmail() {
+        return receiveEmail;
     }
 
-    public void setReplayAddress(String replayAddress) {
-        this.replayAddress = replayAddress;
+    public void setReceiveEmail(String receiveEmail) {
+        this.receiveEmail = receiveEmail;
     }
 
-    public String getToAddress() {
-        return toAddress;
+    public String getFromEmail() {
+        return fromEmail;
     }
 
-    public void setToAddress(String toAddress) {
-        this.toAddress = toAddress;
+    public void setFromEmail(String fromEmail) {
+        this.fromEmail = fromEmail;
     }
 
     public String getSubject() {
@@ -75,5 +95,13 @@ public class EmailMailInfo {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

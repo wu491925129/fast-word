@@ -1,19 +1,24 @@
 package com.wulong.project.web;
+
 import com.alibaba.fastjson.JSON;
-import com.sun.xml.internal.ws.api.pipe.Tube;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wulong.project.core.Result;
 import com.wulong.project.core.ResultGenerator;
 import com.wulong.project.email.EmailTemplet;
+import com.wulong.project.email.MailConstant;
 import com.wulong.project.email.entity.EmailMailInfo;
+import com.wulong.project.email.jk.Provider;
+import com.wulong.project.email.jk.RegMailSenderFactory;
+import com.wulong.project.email.jk.Sender;
+import com.wulong.project.email.service.EmailSendService;
 import com.wulong.project.model.UserInfo;
 import com.wulong.project.service.UserInfoService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.wulong.project.slog.SLog;
 import com.wulong.project.tool.CaptchaUtils;
-import com.wulong.project.tool.EmailSendUtil;
 import com.wulong.project.tool.FileDownloadUtils;
 import com.wulong.project.tool.IpUtils;
+import jdk.net.SocketFlow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,17 +50,18 @@ public class UserInfoController {
     @Resource
     private UserInfoService userInfoService;
 
-    @Value("${spring.mail.username}")
-    private String serverEmail;
+    @Value("${project.name}")
+    private String projectName;
+
     /**
      * 邮件
      */
-    @Resource
-    private JavaMailSender javaMailSender;
+    /*@Resource
+    private JavaMailSender javaMailSender;*/
 
     @PostMapping("/regist")
     @SLog(type = "regist",tag = "注册",msg = "用户账号注册")
-    public Result add(@RequestBody(required = false) UserInfo userInfo, HttpServletRequest request) {
+    public Result add(@RequestBody(required = false) UserInfo userInfo, HttpServletRequest request, HttpSession session) {
         userInfo.setUserId(UUID.randomUUID().toString().replace("-",""));
         userInfo.setLoginIp(IpUtils.getIpAddr(request));
     	Map<String,Object> ipInfo = getIpInfo(userInfo.getLoginIp());
@@ -74,37 +81,15 @@ public class UserInfoController {
     	// 默认禁用 需要邮箱验证
     	userInfo.setDisable(0);
     	userInfo.setDelFlag(0);
-        userInfoService.save(userInfo);
-        //sendEmail(userInfo.getEmail());
-        EmailMailInfo emailMailInfo = new EmailMailInfo();
-        emailMailInfo.setToAddress(userInfo.getEmail());
-        String vCode = CaptchaUtils.creatCaptcha();
-        emailMailInfo.setSubject("FastWord 账号注册 验证码["+vCode+"]");
-        emailMailInfo.setContent(EmailTemplet.getHtml("Fast Word账号注册",userInfo.getUserName(),"注册",vCode));
-        try {
-            EmailSendUtil.sendHtmlMail(emailMailInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ResultGenerator.genSuccessResult();
-    }
-
-    /**
-     * 发送邮件
-     */
-    private boolean sendEmail(String eMail) {
-        try {
-            final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-            message.setFrom(serverEmail);
-            message.setTo(eMail);
-            message.setSubject("测试邮件主题");
-            message.setText("测试邮件内容");
-            this.javaMailSender.send(mimeMessage);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    	// 获取邮件注册工厂方法
+        Provider provider = new RegMailSenderFactory();
+        Sender sender = provider.produceEmail();
+        Map<String,Object> result = sender.sendEmail(projectName,userInfo.getEmail(),session);
+        if ((Boolean) result.get(MailConstant.EMAIL_SEND_STATUS)) {
+            userInfoService.save(userInfo);
+            return ResultGenerator.genSuccessResult(result.get(MailConstant.EMAIL_V_CODE));
+        } else {
+            return ResultGenerator.genFailResult("用户注册失败！");
         }
     }
 
@@ -123,6 +108,13 @@ public class UserInfoController {
     public Result delete(@RequestParam Integer id) {
         userInfoService.deleteById(id);
         return ResultGenerator.genSuccessResult();
+    }
+
+    @GetMapping("/test/{name}")
+    public Map<String,Object> test(@PathVariable String name) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("aava",name);
+        return result;
     }
 
     @PostMapping("/update")

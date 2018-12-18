@@ -1,6 +1,8 @@
-package com.wulong.project.tool;
+package com.wulong.project.email.service;
 
 import com.wulong.project.email.entity.EmailMailInfo;
+import com.wulong.project.model.EmailConfigInfo;
+import org.springframework.stereotype.Service;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -15,20 +17,15 @@ import java.util.Properties;
  * @Date: 2018/12/17 14:56
  * @Email: 491925129@qq.com
  */
-public class EmailSendUtil {
-    private final static String host = "smtp.qq.com"; //163的服务器
-    private final static String formName = "491925129@qq.com";//你的邮箱
-    private final static String password = "krnknykffqpgbjjj"; //授权码
-    private final static String replayAddress = "491925129@qq.com"; //你的邮箱
+@Service
+public class EmailSendService {
 
-
-    public static void sendHtmlMail(EmailMailInfo info)throws Exception{
-        info.setHost(host);
-        info.setFormName(formName);
-        // 邮箱授权码
-        info.setFormPassword(password);
-        info.setReplayAddress(replayAddress);
-
+    /**
+     * 发送HTML邮件
+     * @param info
+     * @throws Exception
+     */
+    public void sendHtmlMail(EmailConfigInfo info)throws Exception{
         Message message = getMessage(info);
         // MiniMultipart类是一个容器类，包含MimeBodyPart类型的对象
         Multipart mainPart = new MimeMultipart();
@@ -42,26 +39,25 @@ public class EmailSendUtil {
         Transport.send(message);
     }
 
-    public static void sendTextMail(EmailMailInfo info) throws Exception {
 
-        info.setHost(host);
-        info.setFormName(formName);
-        info.setFormPassword(password);   //网易邮箱的授权码~不一定是密码
-        info.setReplayAddress(replayAddress);
+    /**
+     * 发送文本邮件
+     * @param info
+     * @throws Exception
+     */
+    public void sendTextMail(EmailConfigInfo info) throws Exception {
         Message message = getMessage(info);
         //消息发送的内容
         message.setText(info.getContent());
-
         Transport.send(message);
     }
 
-    private static Message getMessage(EmailMailInfo info) throws Exception{
-        final Properties p = System.getProperties() ;
+    private Message getMessage(EmailConfigInfo info) throws Exception{
+        Properties p = System.getProperties() ;
         p.setProperty("mail.smtp.host", info.getHost());
         p.setProperty("mail.smtp.auth", "true");
-        p.setProperty("mail.smtp.user", info.getFormName());
+        p.setProperty("mail.smtp.user", info.getFromEmail());
         p.setProperty("mail.smtp.pass", info.getFormPassword());
-
         // 根据邮件会话属性和密码验证器构造一个发送邮件的session
         Session session = Session.getInstance(p, new Authenticator(){
             @Override
@@ -74,14 +70,13 @@ public class EmailSendUtil {
         //消息发送的主题
         message.setSubject(info.getSubject());
         //接受消息的人
-        message.setReplyTo(InternetAddress.parse(info.getReplayAddress()));
+        message.setReplyTo(InternetAddress.parse(info.getReceiveEmail()));
         //消息的发送者
-        message.setFrom(new InternetAddress(p.getProperty("mail.smtp.user"),"FastWord"));
+        message.setFrom(new InternetAddress(p.getProperty("mail.smtp.user"),info.getFormName()));
         // 创建邮件的接收者地址，并设置到邮件消息中
-        message.setRecipient(Message.RecipientType.TO,new InternetAddress(info.getToAddress()));
+        message.setRecipient(Message.RecipientType.TO,new InternetAddress(info.getReceiveEmail()));
         // 消息发送的时间
         message.setSentDate(new Date());
-
 
         return message ;
     }
