@@ -2,6 +2,7 @@ package com.wulong.project.core;
 
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import tk.mybatis.mapper.entity.Condition;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 

@@ -1,10 +1,13 @@
 package com.wulong.project.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "user_info")
-public class UserInfo {
+public class UserInfo implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "user_id")
     private String userId;
@@ -44,7 +47,7 @@ public class UserInfo {
     private int onLine;
 
     /**
-     * 是否禁用
+     * 是否禁用  0不禁用/1禁用
      */
     private int disable;
 
@@ -101,7 +104,7 @@ public class UserInfo {
     private Date opTime;
 
     /**
-     * 删除标记
+     * 删除标记   0不删除/1删除
      */
     @Column(name = "del_flag")
     private int delFlag;

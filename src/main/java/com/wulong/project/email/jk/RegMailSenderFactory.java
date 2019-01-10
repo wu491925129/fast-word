@@ -1,6 +1,6 @@
 package com.wulong.project.email.jk;
 
-import com.wulong.project.email.jk.impl.RegMailSender;
+import com.wulong.project.email.jk.impl.RegistMailSender;
 
 /**
  * @Author: wulong
@@ -11,6 +11,6 @@ public class RegMailSenderFactory implements Provider {
 
     @Override
     public Sender produceEmail() {
-        return new RegMailSender();
+        return new RegistMailSender();
     }
 }

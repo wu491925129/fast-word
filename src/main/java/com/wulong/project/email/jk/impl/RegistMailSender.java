@@ -20,9 +20,9 @@ import java.util.Map;
  * @Date: 2018/12/18 15:12
  * @Email: 491925129@qq.com
  */
-public class RegMailSender implements Sender {
+public class RegistMailSender implements Sender {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegMailSender.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegistMailSender.class);
 
     @Override
     public Map<String,Object> sendEmail(String fromName,String eMail, HttpSession session) {

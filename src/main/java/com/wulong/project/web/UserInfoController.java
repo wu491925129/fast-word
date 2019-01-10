@@ -5,41 +5,37 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wulong.project.core.Result;
 import com.wulong.project.core.ResultGenerator;
-import com.wulong.project.email.EmailTemplet;
 import com.wulong.project.email.MailConstant;
-import com.wulong.project.email.entity.EmailMailInfo;
 import com.wulong.project.email.jk.Provider;
 import com.wulong.project.email.jk.RegMailSenderFactory;
 import com.wulong.project.email.jk.Sender;
-import com.wulong.project.email.service.EmailSendService;
 import com.wulong.project.model.UserInfo;
+import com.wulong.project.redis.service.RedisManagerService;
 import com.wulong.project.service.UserInfoService;
 import com.wulong.project.slog.SLog;
-import com.wulong.project.tool.CaptchaUtils;
 import com.wulong.project.tool.FileDownloadUtils;
 import com.wulong.project.tool.IpUtils;
-import jdk.net.SocketFlow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author:wulong
  * @Date:2018/11/19 14:25
  * @mail:491925129@qq.com
  * @CrossOrigin 注解 支持跨域
+ * @Transactional 事务
  * @Transactional 事务
 */
 @CrossOrigin
@@ -53,17 +49,18 @@ public class UserInfoController {
     @Value("${project.name}")
     private String projectName;
 
-    /**
-     * 邮件
-     */
-    /*@Resource
-    private JavaMailSender javaMailSender;*/
+    @Autowired
+    private RedisManagerService redisManagerService;
 
     @PostMapping("/regist")
     @SLog(type = "regist",tag = "注册",msg = "用户账号注册")
     public Result add(@RequestBody(required = false) UserInfo userInfo, HttpServletRequest request, HttpSession session) {
+        if (checkUser(userInfo)) {
+            return ResultGenerator.genFailResult("用户已存在，请勿重复注册！");
+        }
         userInfo.setUserId(UUID.randomUUID().toString().replace("-",""));
         userInfo.setLoginIp(IpUtils.getIpAddr(request));
+        userInfo.setUserName(userInfo.getEmail());
     	Map<String,Object> ipInfo = getIpInfo(userInfo.getLoginIp());
     	String code = ipInfo.get("code").toString();
     	System.out.println(code);
@@ -79,7 +76,7 @@ public class UserInfoController {
             userInfo.setIspId(data.get("isp_id").toString());
     	}
     	// 默认禁用 需要邮箱验证
-    	userInfo.setDisable(0);
+    	userInfo.setDisable(1);
     	userInfo.setDelFlag(0);
     	// 获取邮件注册工厂方法
         Provider provider = new RegMailSenderFactory();
@@ -87,9 +84,33 @@ public class UserInfoController {
         Map<String,Object> result = sender.sendEmail(projectName,userInfo.getEmail(),session);
         if ((Boolean) result.get(MailConstant.EMAIL_SEND_STATUS)) {
             userInfoService.save(userInfo);
+            // redis缓存验证码
+            // 使用冒号的形式实现多层级储存数据
+            redisManagerService.redisSetString(
+                    userInfo.getEmail()+":regist",
+                    result.get("vCode").toString(),
+                    60*5,
+                    TimeUnit.SECONDS);
+            redisManagerService.redisSetObject(userInfo.getEmail()+":userInfo",userInfo);
             return ResultGenerator.genSuccessResult(result.get(MailConstant.EMAIL_V_CODE));
         } else {
-            return ResultGenerator.genFailResult("用户注册失败！");
+            return ResultGenerator.genFailResult("验证码邮件发送异常！");
+        }
+    }
+
+    /**
+     * 用户注册校验
+     * @param userInfo
+     * @return
+     */
+    private boolean checkUser(UserInfo userInfo) {
+        Condition condition = new Condition(UserInfo.class);
+        condition.createCriteria().andEqualTo("userName",userInfo.getEmail());
+        List<UserInfo> infoList = userInfoService.findByCondition(condition);
+        if (infoList.size() > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
