@@ -1,6 +1,7 @@
 package com.wulong.project.service;
 import com.wulong.project.model.UserInfo;
 import com.wulong.project.core.Service;
+import org.apache.ibatis.annotations.Select;
 
 
 /**
@@ -8,4 +9,5 @@ import com.wulong.project.core.Service;
  */
 public interface UserInfoService extends Service<UserInfo> {
 
+    void updateUserStatus(String userName);
 }

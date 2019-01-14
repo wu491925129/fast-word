@@ -19,4 +19,8 @@ public class UserInfoServiceImpl extends AbstractService<UserInfo> implements Us
     @Resource
     private UserInfoMapper userInfoMapper;
 
+    @Override
+    public void updateUserStatus(String userName) {
+        userInfoMapper.updateUndisableByUserName(userName);
+    }
 }

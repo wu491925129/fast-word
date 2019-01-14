@@ -1,12 +1,19 @@
 package com.wulong.project.web;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wulong.project.core.Result;
 import com.wulong.project.core.ResultGenerator;
 import com.wulong.project.email.MailConstant;
 import com.wulong.project.model.EmailConfigInfo;
+import com.wulong.project.model.UserInfo;
+import com.wulong.project.redis.service.RedisManagerService;
 import com.wulong.project.service.EmailConfigService;
+import com.wulong.project.service.UserInfoService;
+import com.wulong.project.slog.SLog;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +32,11 @@ public class EmailConfigController {
     @Resource
     private EmailConfigService emailConfigService;
 
+    @Autowired
+    private RedisManagerService redisManagerService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     /**
      * 邮件验证
@@ -34,25 +46,19 @@ public class EmailConfigController {
      * @return
      */
     @PostMapping("/check")
+    @SLog(type = "registCheck",tag = "校验",msg = "用户账号注册验证码校验")
     public Result registCheck(String email,String type, String vCode, HttpSession session) {
-        String code;
-        switch (type) {
-            case MailConstant.REGIST_SESSION_ATTR:
-                code = (String) session.getAttribute(MailConstant.REGIST_SESSION_ATTR+":"+email);
-                if (vCode.equals(code)) {
-                    return ResultGenerator.genSuccessResult();
-                } else {
-                    return ResultGenerator.genFailResult("验证码错误!");
-                }
-            case MailConstant.RESET_SESSION_ATTR:
-                code = (String) session.getAttribute(MailConstant.RESET_SESSION_ATTR+":"+email);
-                if (vCode.equals(code)) {
-                    return ResultGenerator.genSuccessResult();
-                } else {
-                    return ResultGenerator.genFailResult("验证码错误!");
-                }
-             default:
-                    return ResultGenerator.genFailResult("未知错误");
+        // 从redis中获取验证码
+        String code = redisManagerService.redisGetByKey(email+":"+type);
+        if (vCode.equals(code)) {
+            // 验证通过 更新数据库和redis中用户状态为正常状态
+            userInfoService.updateUserStatus(email);
+            JSONObject userJson = JSON.parseObject(redisManagerService.redisGetByKey(email+":userInfo"));
+            userJson.put("disable",0);
+            redisManagerService.redisSetString(email+":userInfo",JSON.toJSONString(userJson));
+            return ResultGenerator.genSuccessResult();
+        } else {
+            return ResultGenerator.genFailResult("验证码错误或者验证码已过期！");
         }
     }
 

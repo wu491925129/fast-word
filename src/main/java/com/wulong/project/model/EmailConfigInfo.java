@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Table(name = "email_config")
 public class EmailConfigInfo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
