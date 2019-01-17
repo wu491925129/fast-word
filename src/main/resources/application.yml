@@ -12,9 +12,12 @@ spring:
     properties:
       mail:
         smtp:
+          ssl:
+            enable: true
           socketFactory:
             class: javax.net.ssl.SSLSocketFactory
         debug: false
+
 
 # 通用配置
 # ################################

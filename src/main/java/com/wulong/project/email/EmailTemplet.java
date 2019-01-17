@@ -10,7 +10,7 @@ import java.io.*;
  * @Email: 491925129@qq.com
  */
 public class EmailTemplet {
-    public static String getHtml(String title,String userName,String type,String captcha) {
+    public static String getHtml(String title, String userName, String type, String captcha) {
         String emailTemplet = System.getProperty("emailTemplet");
         emailTemplet = emailTemplet.replace("$(title)", title);
         emailTemplet = emailTemplet.replace("$(userName)", userName);
@@ -23,19 +23,13 @@ public class EmailTemplet {
      * @return void
      **/
     public static void initEmailTemplet() {
-        String url = null;
-        try {
-            url = ResourceUtils.getURL("classpath:temple/emailTemplet.html").getPath();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        url = url.substring(1, url.length());
         try {
             String encoding = "UTF-8";
-            File file = new File(url);
-            if (file.isFile() && file.exists()) { // 判断文件是否存在
+            // 注：打包后会找不到静态文件，故使用类加载器流读取
+            InputStream fileInputStream = EmailTemplet.class.getClassLoader().getResourceAsStream("emailTemplet.html");
+            if (fileInputStream != null) { // 判断文件是否存在
                 InputStreamReader read = new InputStreamReader(
-                        new FileInputStream(file), encoding);// 考虑到编码格式
+                        fileInputStream, encoding);// 考虑到编码格式
                 BufferedReader bufferedReader = new BufferedReader(read);
                 String lineTxt = null;
                 StringBuilder sb = new StringBuilder();

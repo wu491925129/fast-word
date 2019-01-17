@@ -2,6 +2,7 @@ package com.wulong.project.web;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wulong.project.core.Result;
@@ -55,7 +56,7 @@ public class EmailConfigController {
             userInfoService.updateUserStatus(email);
             JSONObject userJson = JSON.parseObject(redisManagerService.redisGetByKey(email+":userInfo"));
             userJson.put("disable",0);
-            redisManagerService.redisSetString(email+":userInfo",JSON.toJSONString(userJson));
+            redisManagerService.redisSetString(email+":userInfo",JSON.toJSONString(userJson, SerializerFeature.WriteMapNullValue));
             return ResultGenerator.genSuccessResult();
         } else {
             return ResultGenerator.genFailResult("验证码错误或者验证码已过期！");
