@@ -1,7 +1,6 @@
 package com.wulong.project.email.jk.impl;
 
 import com.wulong.project.email.EmailTemplet;
-import com.wulong.project.email.entity.EmailMailInfo;
 import com.wulong.project.email.jk.Sender;
 import com.wulong.project.email.service.EmailSendService;
 import com.wulong.project.model.EmailConfigInfo;

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wulong.project.dao.UploadInfoMapper">
+  <resultMap id="BaseResultMap" type="com.wulong.project.model.UploadInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="file_id" jdbcType="VARCHAR" property="fileId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="file_suffix" jdbcType="VARCHAR" property="fileSuffix" />
+    <result column="op_time" jdbcType="TIMESTAMP" property="opTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="file_name" jdbcType="LONGVARCHAR" property="fileName" />
+    <result column="file_desc" jdbcType="LONGVARCHAR" property="fileDesc" />
+    <result column="ext_1" jdbcType="LONGVARCHAR" property="ext1" />
+    <result column="ext_2" jdbcType="LONGVARCHAR" property="ext2" />
+    <result column="ext_3" jdbcType="LONGVARCHAR" property="ext3" />
+  </resultMap>
+</mapper>
