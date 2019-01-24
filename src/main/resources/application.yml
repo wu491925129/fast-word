@@ -23,3 +23,5 @@ spring:
 # ################################
 project:
   name: FAST WORD
+  token:
+    expiredTime: 30000

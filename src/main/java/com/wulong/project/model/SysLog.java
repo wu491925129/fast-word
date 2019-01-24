@@ -61,6 +61,12 @@ public class SysLog {
     private String param;
 
     /**
+     * 返回状态码
+     */
+    @Column(name = "result_code")
+    private int resultCode;
+
+    /**
      * 执行结果
      */
     private String result;
@@ -271,5 +277,14 @@ public class SysLog {
      */
     public void setResult(String result) {
         this.result = result;
+    }
+
+
+    public int getResultCode() {
+        return resultCode;
+    }
+
+    public void setResultCode(int resultCode) {
+        this.resultCode = resultCode;
     }
 }

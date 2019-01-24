@@ -2,6 +2,7 @@ package com.wulong.project.config.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.wulong.project.model.SysLog;
 import com.wulong.project.service.SysLogService;
@@ -119,7 +120,9 @@ public class WebLogAspect {
 			sysLog.setType(sLog.type());
 			sysLog.setParam(JSON.toJSONString(getMethodParams(request)));
 			// null也输出
+			int resultCode = (int) JSON.parseObject(retVal.toString()).get("code");
 			sysLog.setResult(JSON.toJSONString(retVal,SerializerFeature.WriteMapNullValue));
+			sysLog.setResultCode(resultCode);
 			sysLog.setOpTime(new Date());
 			sysLogService.save(sysLog);
 		}

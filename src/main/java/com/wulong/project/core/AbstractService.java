@@ -77,6 +77,7 @@ public abstract class AbstractService<T> implements Service<T> {
         return mapper.selectByCondition(condition);
     }
 
+
     @Override
     public List<T> findAll() {
         return mapper.selectAll();
