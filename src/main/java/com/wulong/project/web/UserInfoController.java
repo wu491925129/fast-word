@@ -125,6 +125,20 @@ public class UserInfoController {
         return JSON.parseObject(json);
     }
 
+    /**
+     * 更新头像
+     * @param userName
+     * @param avatarUrl
+     * @return
+     */
+    @PostMapping("/changeAvatar")
+    public Result changeAvatar(@RequestParam("userName") String userName, @RequestParam("avatarUrl") String avatarUrl) {
+        UserInfo userInfo = JSON.parseObject(redisManagerService.redisGetByKey(userName+":userInfo"),UserInfo.class);
+        userInfo.setAvatarUrl(avatarUrl);
+        redisManagerService.redisSetObject(userName+":userInfo",userInfo);
+        return ResultGenerator.genSuccessResult();
+    }
+
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
         userInfoService.deleteById(id);
