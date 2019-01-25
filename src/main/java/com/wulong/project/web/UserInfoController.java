@@ -3,6 +3,7 @@ package com.wulong.project.web;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Strings;
 import com.wulong.project.core.Result;
 import com.wulong.project.core.ResultGenerator;
 import com.wulong.project.email.MailConstant;
@@ -114,16 +115,13 @@ public class UserInfoController {
         }
     }
 
-
-
     /**
      * 根据ip获取地理位置信息
      * @param ip
      * @return
      */
     private Map<String, Object> getIpInfo(String ip) {
-        Map<String,Object> result = new HashMap<>();
-        String json = FileDownloadUtils.getURLContent("116.62.4.184");
+        String json = FileDownloadUtils.getURLContent(ip);
         return JSON.parseObject(json);
     }
 
@@ -131,13 +129,6 @@ public class UserInfoController {
     public Result delete(@RequestParam Integer id) {
         userInfoService.deleteById(id);
         return ResultGenerator.genSuccessResult();
-    }
-
-    @GetMapping("/test/{name}")
-    public Map<String,Object> test(@PathVariable String name) {
-        Map<String,Object> result = new HashMap<>();
-        result.put("aava",name);
-        return result;
     }
 
     @PostMapping("/update")
