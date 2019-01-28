@@ -3,7 +3,6 @@ package com.wulong.project.web;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.base.Strings;
 import com.wulong.project.core.Result;
 import com.wulong.project.core.ResultGenerator;
 import com.wulong.project.email.MailConstant;
@@ -25,7 +24,6 @@ import tk.mybatis.mapper.entity.Condition;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -132,7 +130,7 @@ public class UserInfoController {
      * @return
      */
     @PostMapping("/changeAvatar")
-    public Result changeAvatar(@RequestParam("userName") String userName, @RequestParam("avatarUrl") String avatarUrl) {
+    public Result changeAvatar(@RequestParam(value = "userName",required=false) String userName, @RequestParam(value = "avatarUrl",required=false) String avatarUrl) {
         UserInfo userInfo = JSON.parseObject(redisManagerService.redisGetByKey(userName+":userInfo"),UserInfo.class);
         userInfo.setAvatarUrl(avatarUrl);
         redisManagerService.redisSetObject(userName+":userInfo",userInfo);
