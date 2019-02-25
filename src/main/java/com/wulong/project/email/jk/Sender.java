@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface Sender {
 
-    public Map<String,Object> sendEmail(String fromName,String eMail, HttpSession session);
+    Map<String,Object> sendEmail(String fromName,String eMail, HttpSession session);
 
 }
